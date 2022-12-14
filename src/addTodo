@@ -1,0 +1,14 @@
+import database from "./database";
+
+import saveToLocalStorage from "./storage";
+
+const addNewtask = (task,projectName) => {
+    database.forEach(obj => {
+        if (obj.name.toUpperCase() === projectName){
+            obj.tasks.push(task);
+            saveToLocalStorage();
+        }
+    });
+}
+
+export default addNewtask;

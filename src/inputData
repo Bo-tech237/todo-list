@@ -1,0 +1,116 @@
+
+import database from "./database";
+
+import addNewtask from "./addTodo";
+
+import createProject from "./createProject";
+
+import saveToLocalStorage from "./storage";
+
+
+function Input(){
+const projects = document.querySelector('.project-list');
+const mainTasks = document.querySelector('.main-tasks');
+const mainInput = document.querySelector('.main-input');
+const sidebarInput = document.querySelector('.sidebar-input');
+const inputright = document.querySelector('.input-right');
+const inputLeft = document.querySelector('.input-left');
+const sidebar = document.querySelector('.sidebar');
+const main = document.querySelector('.main');
+const footer = document.querySelector('.footer');
+
+function showContent(name, tasks){
+    mainTasks.innerText = '';
+    const projectName = document.createElement('div');
+    const divTask = document.createElement('div');
+    const taskButton = document.createElement('button');
+    taskButton.setAttribute('class', 'button button-task');
+    taskButton.textContent = 'Add task';
+    divTask.setAttribute('class', 'tasks');
+    projectName.setAttribute('class', 'project-title');
+    projectName.textContent = name;
+    divTask.appendChild(taskButton);
+    mainTasks.append(projectName, divTask);
+    
+    for (let task of tasks){
+        const taskName = document.createElement('div');
+        taskName.textContent = task;
+        mainTasks.append(taskName, divTask);
+    }
+}
+
+sidebar.addEventListener('click', (e) => {
+    let target = e.target;
+    if (!target) return;
+    if (target.classList.contains('new-project-button')){
+        if (sidebarInput.classList.contains('hidden')){
+            sidebarInput.classList.remove('hidden');
+            inputLeft.focus();
+        }
+    } else if (target.classList.contains('button-left-add')){
+        if (!inputLeft.value) return;
+        let project = createProject(inputLeft.value);
+
+        const getNewProject = ({name}) => {
+            if (name === project){
+                const projectName = document.createElement('div');
+                projectName.setAttribute('class', 'project-name-container');
+
+                const button = document.createElement('button');
+                button.setAttribute('class', 'button project-name');
+                button.textContent = name;
+
+                projectName.appendChild(button);
+                projects.appendChild(projectName);
+                sidebarInput.classList.add('hidden');
+                inputLeft.value = ''; 
+            }
+        }
+        database.forEach(getNewProject);
+
+    } else if (target.classList.contains('project-name')){
+
+        const addProjectName = ({name, tasks}) => {
+            if (name.toUpperCase() === target.innerText){
+                showContent(name ,tasks);
+            }
+        }
+        database.forEach(addProjectName);
+
+    }  else if (target.classList.contains('button-left-cancel')){
+        sidebarInput.classList.add('hidden');
+        inputLeft.value = ''; 
+    }
+});
+
+main.addEventListener('click', (e) => {
+    let target = e.target;
+    if (!target) return;
+
+    if (target.classList.contains('button-task')){
+        if (mainInput.classList.contains('hidden')){
+            mainInput.classList.remove('hidden');
+            inputright.focus();
+        }
+    } else if (target.classList.contains('button-right-add')){
+        addNewtask(inputright.value, mainTasks.children[0].innerText);
+  
+        const getNewTask = ({name, tasks}) => {
+            if (name.toUpperCase() === mainTasks.children[0].innerText){
+                showContent(name ,tasks);
+            }
+        }
+
+        database.forEach(getNewTask);
+        mainInput.classList.add('hidden');
+        inputright.value = '';
+
+    } else if (target.classList.contains('button-right-cancel')){
+        mainInput.classList.add('hidden');
+        inputright.value = '';
+    }
+});
+footer.textContent = `COPY RIGHT © ${new Date().getFullYear()} BOKALLI FERDINAND`;
+}
+
+export default Input;

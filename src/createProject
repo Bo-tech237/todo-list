@@ -1,0 +1,19 @@
+import database from "./database";
+
+import saveToLocalStorage from "./storage";
+
+function Project(name){
+    const tasks = [];
+
+    return {name, tasks};
+}
+
+function createProject(name){
+    let project = Project(name);
+    database.push(project);
+    saveToLocalStorage();
+    
+    return project.name;
+}
+
+export default createProject;
